@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useContext } from 'react';
-import SettingsContext from './context/SettingsContext';
+import SettingsContext from '../context/context';
 import useForm from '../../hooks/form';
 
 import { v4 as uuid } from 'uuid';
