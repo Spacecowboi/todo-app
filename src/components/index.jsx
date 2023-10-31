@@ -1,10 +1,12 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useContext } from 'react';
+import SettingsContext from './context/SettingsContext';
 import useForm from '../../hooks/form';
 
 import { v4 as uuid } from 'uuid';
 
 const Todo = () => {
 
+  const settings = useContext(SettingsContext);
   const [defaultValues] = useState({
     difficulty: 4,
   });
@@ -15,8 +17,7 @@ const Todo = () => {
   function addItem(item) {
     item.id = uuid();
     item.complete = false;
-    console.log(item);
-    setList([...list, item]);
+    setList((prevList) => [...prevList, item]);
   }
 
   function deleteItem(id) {
@@ -38,13 +39,23 @@ const Todo = () => {
   }
 
   useEffect(() => {
-    let incompleteCount = list.filter(item => !item.complete).length;
+    let visibleItems = list;
+    if (settings.hideCompleted) {
+      visibleItems = visibleItems.filter(item => !item.complete);
+    }
+    if (settings.sortDifficulty !== 'default') {
+      visibleItems.sort((a, b) => a.difficulty - b.difficulty);
+    }
+    visibleItems = visibleItems.slice(0, settings.displayItems);
+    setList(visibleItems);
+
+    let incompleteCount = visibleItems.filter(item => !item.complete).length;
     setIncomplete(incompleteCount);
     document.title = `To Do List: ${incomplete}`;
     // linter will want 'incomplete' added to dependency array unnecessarily. 
     // disable code used to avoid linter warning 
     // eslint-disable-next-line react-hooks/exhaustive-deps 
-  }, [list]);  
+  }, [list, settings]);  
 
   return (
     <>
