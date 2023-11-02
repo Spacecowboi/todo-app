@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useContext } from 'react';
 import SettingsContext from '../context/context';
-import useForm from '../../hooks/form';
+import useForm from '../hooks/form';
 
 import { v4 as uuid } from 'uuid';
 
@@ -10,6 +10,7 @@ const Todo = () => {
   const [defaultValues] = useState({
     difficulty: 4,
   });
+  const [originalList, setOriginalList] = useState([]);
   const [list, setList] = useState([]);
   const [incomplete, setIncomplete] = useState([]);
   const { handleChange, handleSubmit } = useForm(addItem, defaultValues);
@@ -17,36 +18,36 @@ const Todo = () => {
   function addItem(item) {
     item.id = uuid();
     item.complete = false;
-    setList((prevList) => [...prevList, item]);
+    setOriginalList((prevList) => [...prevList, item]);
   }
 
   function deleteItem(id) {
-    const items = list.filter( item => item.id !== id );
-    setList(items);
+    const items = originalList.filter( item => item.id !== id );
+    setOriginalList(items);
   }
 
   function toggleComplete(id) {
 
-    const items = list.map( item => {
+    const items = originalList.map( item => {
       if ( item.id === id ) {
         item.complete = ! item.complete;
       }
       return item;
     });
 
-    setList(items);
+    setOriginalList(items);
 
   }
 
   useEffect(() => {
-    let visibleItems = list;
+    let visibleItems = originalList;
     if (settings.hideCompleted) {
       visibleItems = visibleItems.filter(item => !item.complete);
     }
-    if (settings.sortDifficulty !== 'default') {
+    if (settings.sortField !== 'default') {
       visibleItems.sort((a, b) => a.difficulty - b.difficulty);
     }
-    visibleItems = visibleItems.slice(0, settings.displayItems);
+    visibleItems = visibleItems.slice(0, settings.itemsPerPage);
     setList(visibleItems);
 
     let incompleteCount = visibleItems.filter(item => !item.complete).length;
@@ -55,7 +56,7 @@ const Todo = () => {
     // linter will want 'incomplete' added to dependency array unnecessarily. 
     // disable code used to avoid linter warning 
     // eslint-disable-next-line react-hooks/exhaustive-deps 
-  }, [list, settings]);  
+  }, [originalList, settings]);  
 
   return (
     <>
