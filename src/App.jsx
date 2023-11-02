@@ -1,6 +1,6 @@
 import React from 'react';
-import SettingsContext from './context/SettingsContext';
-import Todo from './Components/Todo';
+import { SettingsProvider} from './context/context';
+import Todo from './components/index';
 
 export default class App extends React.Component {
   state = {
@@ -11,9 +11,9 @@ export default class App extends React.Component {
 
   render() {
     return (
-      <SettingsContext.Provider value={this.state}>
+      <SettingsProvider>
         <Todo />
-      </SettingsContext.Provider>
+      </SettingsProvider>
     );
   }
 }
