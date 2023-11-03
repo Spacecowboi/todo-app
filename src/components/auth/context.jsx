@@ -1,6 +1,6 @@
 import cookie from 'react-cookies';
 import jwt_decode from 'jwt-decode';
-import React, { useContext, useState } from 'react';
+import React, { useContext, useState, useEffect } from 'react';
 
 const testUsers = {
   Administrator: {
